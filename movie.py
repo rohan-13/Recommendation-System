@@ -6,16 +6,17 @@ import os
 movies = pd.read_csv(r"/Users/rohanpatel/Documents/VS/Python/Movie_Rec/archive/tmdb_5000_movies.csv")
 credits= pd.read_csv(r"/Users/rohanpatel/Documents/VS/Python/Movie_Rec/archive/tmdb_5000_credits.csv")
 
+#combine both dataframes
 data = movies.merge(credits,on='title')
 
 data = data[['movie_id','title','overview','genres','keywords','cast','crew']]
 
-
+#removes all null vales
 data.dropna(inplace=True)
 
-#print(data.isnull().sum())
 
-import ast #for converting str to list
+#converting str to list
+import ast
 
 def convert(text):
     L = []
@@ -25,6 +26,7 @@ def convert(text):
 data['genres'] = data['genres'].apply(convert)
 data['keywords'] = data['keywords'].apply(convert)
 
+#converts cast column from list to paragraph form
 def convert_cast(text):
     L = []
     counter = 0
@@ -35,6 +37,7 @@ def convert_cast(text):
     return L
 data['cast'] = data['cast'].apply(convert_cast)
 
+#gets the director from the crew column
 def fetch_director(text):
     L = []
     for i in ast.literal_eval(text):
@@ -71,8 +74,6 @@ new_df['tags'] = new_df['tags'].apply(lambda x:" ".join(x))
 #Convert all charcters to lowercase
 new_df['tags'] = new_df['tags'].apply(lambda x:x.lower())
 
-#Convert all titles to lowercase
-#new_df['title'] = new_df['title'].str.lower()
 
 
 import nltk
